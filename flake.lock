@@ -1,0 +1,38 @@
+{
+  "nodes": {
+    "installImage": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-BobBqqtA+IYk73GDPkRlPV+NfpXaIqG3SzGdEDvHeX4=",
+        "type": "file",
+        "url": "https://cdn.openbsd.org/pub/OpenBSD/7.3/amd64/install73.iso"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://cdn.openbsd.org/pub/OpenBSD/7.3/amd64/install73.iso"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1686089707,
+        "narHash": "sha256-LTNlJcru2qJ0XhlhG9Acp5KyjB774Pza3tRH0pKIb3o=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "af21c31b2a1ec5d361ed8050edd0303c31306397",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "root": {
+      "inputs": {
+        "installImage": "installImage",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
