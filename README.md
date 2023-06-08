@@ -9,7 +9,9 @@ Don't use this in production: the VM has a known root password.
 ## How to use
 - run
   ```shell
-  nix build github.com:cgohla/obsd.nix
+  $ nix build github.com:cgohla/obsd.nix
+  $ ./result/bin/prepImage.sh vm.qcow2
+  $ nix-shell -p qemu --run "qemu-system-x86_64 -enable-kvm -smp cpus=8 -nographic -drive file=vm.qcow2,if=virtio"
   ```
 
   Note this will download the OpenBSD installer CD, which is about
@@ -19,6 +21,7 @@ Don't use this in production: the VM has a known root password.
 - We can't guarantee bit for bit reproducibility, because the image
   will contain timestamps.
 - The image as built is read-only of course, so to use it in any
-  meaningful way, you need to copy it.
+  meaningful way, you need to copy it, hence the `prepImage.sh`
+  script.
 - The expect script running the installation is probably fragile.
-- We hit a segmentation fault when installing GHC using `pkg_add`.
+- There should probably a dev shell in this flake.

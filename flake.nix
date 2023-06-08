@@ -16,12 +16,13 @@
       let
         targetImage = "vm.qcow2";
         outputPath = "$out/share";
-        diskSize = "10G";
+        diskSize = "30G";
         hostname = "bender";
         username = "jdoe";
         userFullName = "John Doe";
         userPassword = "badpassword";
         rootPassword = "badpassword";
+        prepImage = "prepImage.sh";
       in
       stdenv.mkDerivation {
         name = "obsd73";
@@ -107,10 +108,24 @@
                      expect "The operating system has halted"
                      END
                      ${expect}/bin/expect script.exp
+
+                     cat > ${prepImage} <<END
+                     #!/usr/bin/env bash
+                     # this should probably be a funcion in the dev shell
+                     [[ \$# = 1 ]] || (echo "usage: \$0 VM_NAME" && exit 1)
+
+                     VM_NAME="\$1"
+                     # ${qemu}/bin/qemu-img create -f qcow2 -b ${outputPath}/${targetImage} -F qcow2 "\$VM_NAME" ${diskSize}
+                     cp ${outputPath}/${targetImage} "\$VM_NAME"
+                     chmod a=rw "\$VM_NAME"
+                     END
                      '';
+
         installPhase = ''
                      mkdir -p ${outputPath}
-                     cp ${targetImage} ${outputPath}/${targetImage}
+                     install ${targetImage} ${outputPath}/${targetImage}
+                     mkdir -p $out/bin
+                     install -m a+rx ${prepImage} $out/bin/${prepImage}
                      '';
       };
   };
