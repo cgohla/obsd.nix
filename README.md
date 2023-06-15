@@ -7,15 +7,30 @@ The build result is a qcow2 image for x86_64.
 Don't use this in production: the VM has a known root password.
 
 ## How to use
-- run
+- Run
   ```shell
-  $ nix build github.com:cgohla/obsd.nix
-  $ ./result/bin/prepImage.sh vm.qcow2
-  $ nix-shell -p qemu --run "qemu-system-x86_64 -enable-kvm -smp cpus=8 -nographic -drive file=vm.qcow2,if=virtio"
+  $ nix develop github.com:cgohla/obsd.nix
+  $ prepImage.sh myobsdvm.qcow2 # creates a copy-on-write instance in the current directory
+  $ runImage.sh myobsdvm.qcow2 # boots the VM
   ```
+
+- Get started
 
   Note this will download the OpenBSD installer CD, which is about
   600MB big.
+
+  When you boot the VM, you will be connected to the serial console of
+  the guest system.
+
+  The system has `root` and `jdoe` accounts, both with password
+  `badpassword`.
+
+  The VM has user level network access, so it can access the host
+  network. But as it is, it can not be used to host services.
+
+  QEMU can be stopped by typing `C-a x`, but this is like turning the
+  power off. If you want an orderly shutdown, log in as root as run
+  `halt`.
 
 ## Caveats
 - We can't guarantee bit for bit reproducibility, because the image
@@ -24,4 +39,3 @@ Don't use this in production: the VM has a known root password.
   meaningful way, you need to copy it, hence the `prepImage.sh`
   script.
 - The expect script running the installation is probably fragile.
-- There should probably a dev shell in this flake.
