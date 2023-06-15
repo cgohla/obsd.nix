@@ -1,12 +1,20 @@
 {
   description = "OpenBSD 7.3 VM image";
-
+  
+  # inputs = let
+  #   obsd-package = a: (import ./obsd-package.nix) (a // {platform = "amd64";});
+  # in
   inputs = {
-    installImage = {
-      url = "https://cdn.openbsd.org/pub/OpenBSD/7.3/amd64/install73.iso";
-      flake = false;
+      installImage = {
+        url = "https://cdn.openbsd.org/pub/OpenBSD/7.3/amd64/install73.iso";
+        flake = false;
+      };
+      #      ghc = obsd-package { name = "ghc" ; patchLevel = "1"; };
+      # ghc = {
+      #   url = "http://ftp.openbsd.org/pub/OpenBSD/7.3/packages/amd64/ghc-9.2.7p1.tgz";
+      #   flake = false;
+      # };
     };
-  };
 
   outputs = { self, nixpkgs, installImage }:
     let
@@ -38,7 +46,25 @@
         };
 
       packages.x86_64-linux.default = self.packages.x86_64-linux.obsd73;
+      
+      packages.x86_64-linux.ghc-package-cd = with import nixpkgs { system = "x86_64-linux"; };
+        stdenv.mkDerivation rec {
+          name = "obsd73ghc-packages";
+          src = self;
+          imageFileName = "${name}.iso";
+          buildPhase = ''
 
+          ${cdrkit}/bin/genisoimage -o ${imageFileName} ./cdimagefiles/
+          
+          '';
+
+          installPhase = ''
+          mkdir -p $out/share
+          cp ${imageFileName} $out/share
+          '';
+          
+        };
+      
       packages.x86_64-linux.obsd73 = with import nixpkgs { system = "x86_64-linux"; };
         stdenv.mkDerivation {
           name = "obsd73";
